@@ -44,19 +44,27 @@ export class AuthService {
     };
   }
 
-  signIn(user: SignInDto) {
+  async signIn(signInInfo: SignInDto) {
+    const { email, password } = signInInfo;
+
+    const user = await this.findUserByEmail(email);
+    console.log('user: ', user);
+
+    // 입력받은 이메일로 유저를 찾지 못했을 경우 에러 반환
+    // 입력받은 비밀번호가 DB에 저장된 비밀번호와 다를 경우 에러 반환
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      throw new BadRequestException('이메일 또는 비밀번호를 확인해주세요.');
+    }
+
     return `Sign-In user`;
   }
 
-  async findUserByEmail(email): Promise<boolean> {
+  async findUserByEmail(email): Promise<User> {
     const user = await this.userRepository.findOne({
+      select: ['id', 'email', 'name', 'password', 'role'],
       where: { email },
     });
 
-    if (!user) {
-      return false;
-    }
-
-    return true;
+    return user;
   }
 }
