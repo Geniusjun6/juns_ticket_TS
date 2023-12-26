@@ -2,6 +2,7 @@ import { IsDate, IsEmail, IsEnum, IsNumber, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
+  Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -10,7 +11,7 @@ enum Role {
   'admin',
   'customer',
 }
-
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
