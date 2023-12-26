@@ -1,11 +1,9 @@
 import {
-  Contains,
   IsEmail,
   IsEnum,
   IsNotEmpty,
   IsString,
   MinLength,
-  Validator,
 } from 'class-validator';
 
 enum Role {
