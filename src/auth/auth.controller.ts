@@ -8,7 +8,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('sign-up')
-  async signUp(@Body() userInfo: SignUpDto) {
+  async signUp(@Body() userInfo: SignUpDto): Promise<object> {
     const user = await this.authService.signUp(userInfo);
     return {
       success: 'true',
@@ -18,7 +18,12 @@ export class AuthController {
   }
 
   @Post('/sign-in')
-  async signIn(@Body() signInInfo: SignInDto) {
-    return this.authService.signIn(signInInfo);
+  async signIn(@Body() signInInfo: SignInDto): Promise<object> {
+    const token = await this.authService.signIn(signInInfo);
+    return {
+      success: 'true',
+      message: '로그인에 성공했습니다.',
+      token,
+    };
   }
 }
