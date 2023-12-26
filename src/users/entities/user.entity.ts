@@ -2,12 +2,13 @@ import { IsDate, IsEmail, IsEnum, IsNumber, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-enum Role {
+export enum Role {
   'admin',
   'customer',
 }
@@ -25,7 +26,7 @@ export class User {
   password: string;
 
   @IsEmail()
-  @Column('varchar', { length: 255, nullable: false })
+  @Column('varchar', { length: 255, nullable: false, unique: true })
   email: string;
 
   @IsNumber()
@@ -41,6 +42,10 @@ export class User {
   createdAt: Date;
 
   @IsDate()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ default: null })
   updatedAt: Date;
+
+  @IsDate()
+  @DeleteDateColumn({ default: null })
+  deletedAt: Date;
 }
