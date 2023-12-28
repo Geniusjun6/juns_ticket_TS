@@ -23,7 +23,7 @@ export class AuthController {
     return {
       success: 'true',
       message: '로그인에 성공했습니다.',
-      token,
+      accessToken: token,
     };
   }
 }
