@@ -4,13 +4,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Performance } from 'src/performances/entities/performance.entity';
 
 export enum Role {
-  admin,
-  customer,
+  Admin = 'Admin',
+  Customer = 'Customer',
 }
 @Entity()
 export class User {
@@ -45,4 +47,7 @@ export class User {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
+
+  @OneToMany(() => Performance, (performance) => performance.user)
+  performance: Performance[];
 }

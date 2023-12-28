@@ -7,8 +7,8 @@ import {
 } from 'class-validator';
 
 export enum Role {
-  admin,
-  customer,
+  Admin = 'Admin',
+  Customer = 'Customer',
 }
 
 export class SignUpDto {
