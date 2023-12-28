@@ -37,15 +37,12 @@ export class User {
   @Column('varchar', { nullable: false })
   role: Role;
 
-  @IsDate()
   @CreateDateColumn()
   createdAt: Date;
 
-  @IsDate()
   @UpdateDateColumn({ default: null })
   updatedAt: Date;
 
-  @IsDate()
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
 }
