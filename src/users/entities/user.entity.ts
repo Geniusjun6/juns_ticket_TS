@@ -4,13 +4,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Performance } from 'src/performances/entities/performance.entity';
 
 export enum Role {
-  admin,
-  customer,
+  Admin = 'Admin',
+  Customer = 'Customer',
 }
 @Entity()
 export class User {
@@ -37,15 +39,15 @@ export class User {
   @Column('varchar', { nullable: false })
   role: Role;
 
-  @IsDate()
   @CreateDateColumn()
   createdAt: Date;
 
-  @IsDate()
   @UpdateDateColumn({ default: null })
   updatedAt: Date;
 
-  @IsDate()
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
+
+  @OneToMany(() => Performance, (performance) => performance.user)
+  performance: Performance[];
 }
