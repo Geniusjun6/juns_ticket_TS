@@ -6,9 +6,9 @@ import {
   MinLength,
 } from 'class-validator';
 
-enum Role {
-  'admin',
-  'customer',
+export enum Role {
+  admin,
+  customer,
 }
 
 export class SignUpDto {
