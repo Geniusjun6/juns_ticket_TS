@@ -50,7 +50,7 @@ Authorization: Bearer {{token}}
 GET http://localhost:3000/performances
 
 ### 특정 공연 조회하기(id)
-GET http://localhost:3000/performances/4
+GET http://localhost:3000/performances/1
 
 ### 특정 공연 조회하기(Keyword)
 GET http://localhost:3000/performances/search/?keyword=y
@@ -67,3 +67,7 @@ Authorization: Bearer {{token}}
   "genres": ["Genre2", "Genre3"],
   "overView": "Modify overview"
 }
+
+### 공연 삭제하기
+DELETE http://localhost:3000/performances/6
+Authorization: Bearer {{token}}
