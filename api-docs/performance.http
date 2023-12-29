@@ -23,3 +23,9 @@ Authorization: Bearer {{token}}
   "genres": ["Genre1", "Genre2"],
   "overView": "Your Overview"
 }
+
+### 모든 공연 조회하기
+GET http://localhost:3000/performances
+
+### 특정 공연 조회하기(id)
+GET http://localhost:3000/performances/2
