@@ -40,7 +40,6 @@ export class SeatsService {
   async createSeatByFile(file: Express.Multer.File, performanceId: number) {
     const performance =
       await this.performanceService.findOneById(performanceId);
-    console.log(performance);
 
     if (!file.originalname.endsWith('.csv')) {
       throw new BadRequestException('CSV 파일만 업로드가 가능합니다.');
@@ -59,9 +58,9 @@ export class SeatsService {
       throw new BadRequestException('CSV 파싱에 실패했습니다.');
     }
 
-    const seatsData = parseResult.data as any[];
+    const seatsDatas = parseResult.data as any[];
 
-    for (const seatData of seatsData) {
+    for (const seatData of seatsDatas) {
       if (
         !seatData.zone ||
         !seatData.seatNumber ||
@@ -72,9 +71,23 @@ export class SeatsService {
           'CSV파일의 컬럼은 zone, seatNumber, price, status를 포함해야 합니다.',
         );
       }
+
+      const existingSeat = await this.seatRepository.findOne({
+        where: {
+          performanceId: performance.id,
+          zone: seatData.zone,
+          seatNumber: seatData.seatNumber,
+        },
+      });
+
+      if (existingSeat) {
+        throw new BadRequestException(
+          `이미 존재하는 좌석입니다: ${seatData.zone}-${seatData.seatNumber}`,
+        );
+      }
     }
 
-    const createSeatDto = seatsData.map((seat) => ({
+    const createSeatDto = seatsDatas.map((seat) => ({
       zone: seat.zone,
       seatNumber: +seat.seatNumber,
       price: +seat.price,
