@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
 import { UpdatePerformanceDto } from './dto/update-performance.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Performance } from './entities/performance.entity';
 
 @Injectable()
@@ -28,12 +28,33 @@ export class PerformancesService {
     return '공연 등록이 완료되었습니다.';
   }
 
-  findAll() {
-    return `This action returns all performances`;
+  async findAll(): Promise<Performance[]> {
+    const performances: Performance[] = await this.performanceRepository.find();
+
+    return performances;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} performance`;
+  async findOneById(id: number) {
+    const performance: Performance = await this.performanceRepository.findOne({
+      where: { id },
+    });
+
+    if (!performance) {
+      throw new NotFoundException('해당하는 공연을 찾을 수 없습니다.');
+    }
+
+    return performance;
+  }
+
+  async findByKeyword(keyword: string) {
+    console.log('keyword 어떻게 나와', keyword);
+    const performances: Performance[] = await this.performanceRepository.find({
+      where: {
+        title: Like(`%${keyword}%`),
+      },
+    });
+
+    return performances;
   }
 
   update(id: number, updatePerformanceDto: UpdatePerformanceDto) {
