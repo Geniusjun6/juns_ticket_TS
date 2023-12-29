@@ -1,4 +1,5 @@
 import { IsDate, IsString, IsNumber } from 'class-validator';
+import { Seat } from 'src/seats/entities/seat.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -7,6 +8,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -36,11 +38,6 @@ export class Performance {
   @Column('varchar', { length: 255, nullable: false })
   overView: string;
 
-  @ManyToOne(() => User, (user) => user.performance, {
-    onDelete: 'CASCADE',
-  })
-  user: User;
-
   @Column('int')
   userId: number;
 
@@ -52,4 +49,12 @@ export class Performance {
 
   @DeleteDateColumn({ default: null })
   deletedAt?: Date;
+
+  @ManyToOne(() => User, (user) => user.performance, {
+    onDelete: 'CASCADE',
+  })
+  user: User;
+
+  @OneToMany(() => Seat, (seat) => seat.performance)
+  seat: Seat[];
 }

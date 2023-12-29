@@ -1,0 +1,46 @@
+@token = {{login.response.body.$.accessToken}}
+
+### 회원가입
+POST http://localhost:3000/sign-up
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"confirmPassword" : "123456",
+	"name" : "문준식2",
+	"role" : "Admin",
+	"email" : "admin2@test.com"
+}
+
+### 로그인 (일반 유저)
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "customer1@test.com"
+}
+
+### 로그인 (어드민 유저)
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "admin1@test.com"
+}
+
+
+### 좌석 등록하기
+POST http://localhost:3000/seats/3
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "zone": "A",
+  "seatNumber": 2,
+  "price": 50000,
+  "status": "Possible"
+}
