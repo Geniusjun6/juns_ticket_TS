@@ -11,6 +11,8 @@ import { Performance } from './performances/entities/performance.entity';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { PerformancesModule } from './performances/performances.module';
+import { SeatsModule } from './seats/seats.module';
+import { Seat } from './seats/entities/seat.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -22,7 +24,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [User, Performance],
+    entities: [User, Performance, Seat],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -44,6 +46,7 @@ const typeOrmModuleOptions = {
     }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     AuthModule,
+    SeatsModule,
     UsersModule,
     PerformancesModule,
   ],
