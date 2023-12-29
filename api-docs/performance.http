@@ -1,6 +1,28 @@
 @token = {{login.response.body.$.accessToken}}
 
-### 로그인
+### 회원가입
+POST http://localhost:3000/sign-up
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"confirmPassword" : "123456",
+	"name" : "문준식2",
+	"role" : "Admin",
+	"email" : "admin2@test.com"
+}
+
+### 로그인 (일반 유저)
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "customer1@test.com"
+}
+
+### 로그인 (어드민 유저)
 # @name login
 POST http://localhost:3000/sign-in
 Content-Type: application/json
@@ -28,7 +50,20 @@ Authorization: Bearer {{token}}
 GET http://localhost:3000/performances
 
 ### 특정 공연 조회하기(id)
-GET http://localhost:3000/performances/2
+GET http://localhost:3000/performances/4
 
 ### 특정 공연 조회하기(Keyword)
 GET http://localhost:3000/performances/search/?keyword=y
+
+### 공연 수정하기
+PATCH http://localhost:3000/performances/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "hi",
+  "startTime": "2023-12-31 15:00",
+  "endTime": "2023-12-31 16:00",
+  "genres": ["Genre2", "Genre3"],
+  "overView": "Modify overview"
+}
