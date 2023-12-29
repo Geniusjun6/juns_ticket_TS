@@ -71,12 +71,7 @@ export class PerformancesService {
       throw new UnauthorizedException('권한이 없습니다.');
     }
 
-    const updatedPerformance = await this.performanceRepository.update(
-      { id },
-      updatePerformanceDto,
-    );
-
-    return updatedPerformance;
+    await this.performanceRepository.update({ id }, updatePerformanceDto);
   }
 
   remove(id: number) {
