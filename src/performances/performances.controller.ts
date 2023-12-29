@@ -95,7 +95,11 @@ export class PerformancesController {
 
   @UseGuards(RolesGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.performancesService.remove(+id);
+  async remove(@Param('id') id: number, @UserInfo() user: User) {
+    await this.performancesService.remove(id, user.id);
+    return {
+      success: 'true',
+      message: '공연 삭제에 성공했습니다.',
+    };
   }
 }

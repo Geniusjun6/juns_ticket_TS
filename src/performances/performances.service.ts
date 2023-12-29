@@ -68,13 +68,18 @@ export class PerformancesService {
     const performance = await this.findOneById(id);
 
     if (performance.userId !== userId) {
-      throw new UnauthorizedException('권한이 없습니다.');
+      throw new UnauthorizedException('수정 권한이 없습니다.');
     }
 
     await this.performanceRepository.update({ id }, updatePerformanceDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} performance`;
+  async remove(id: number, userId: number) {
+    const performance = await this.findOneById(id);
+    if (performance.userId !== userId) {
+      throw new UnauthorizedException('삭제 권한이 없습니다.');
+    }
+
+    await this.performanceRepository.softDelete({ id });
   }
 }
