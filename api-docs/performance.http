@@ -1,0 +1,25 @@
+@token = {{login.response.body.$.accessToken}}
+
+### 로그인
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "admin1@test.com"
+}
+
+
+### 공연 등록하기
+POST http://localhost:3000/performances
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Your Title",
+  "startTime": "2023-12-31 11:00",
+  "endTime": "2023-12-31 14:00",
+  "genres": ["Genre1", "Genre2"],
+  "overView": "Your Overview"
+}

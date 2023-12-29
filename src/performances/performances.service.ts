@@ -28,8 +28,10 @@ export class PerformancesService {
     return '공연 등록이 완료되었습니다.';
   }
 
-  findAll() {
-    return `This action returns all performances`;
+  async findAll(): Promise<Performance[]> {
+    const performances: Performance[] = await this.performanceRepository.find();
+
+    return performances;
   }
 
   findOne(id: number) {
