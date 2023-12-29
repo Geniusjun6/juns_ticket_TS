@@ -29,3 +29,6 @@ GET http://localhost:3000/performances
 
 ### 특정 공연 조회하기(id)
 GET http://localhost:3000/performances/2
+
+### 특정 공연 조회하기(Keyword)
+GET http://localhost:3000/performances/search/?keyword=y

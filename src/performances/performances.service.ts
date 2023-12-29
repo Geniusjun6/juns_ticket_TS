@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
 import { UpdatePerformanceDto } from './dto/update-performance.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Performance } from './entities/performance.entity';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class PerformancesService {
     return performances;
   }
 
-  async findOne(id: number) {
+  async findOneById(id: number) {
     const performance: Performance = await this.performanceRepository.findOne({
       where: { id },
     });
@@ -44,6 +44,17 @@ export class PerformancesService {
     }
 
     return performance;
+  }
+
+  async findByKeyword(keyword: string) {
+    console.log('keyword 어떻게 나와', keyword);
+    const performances: Performance[] = await this.performanceRepository.find({
+      where: {
+        title: Like(`%${keyword}%`),
+      },
+    });
+
+    return performances;
   }
 
   update(id: number, updatePerformanceDto: UpdatePerformanceDto) {
