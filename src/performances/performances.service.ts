@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
 import { UpdatePerformanceDto } from './dto/update-performance.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -34,8 +34,16 @@ export class PerformancesService {
     return performances;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} performance`;
+  async findOne(id: number) {
+    const performance: Performance = await this.performanceRepository.findOne({
+      where: { id },
+    });
+
+    if (!performance) {
+      throw new NotFoundException('해당하는 공연을 찾을 수 없습니다.');
+    }
+
+    return performance;
   }
 
   update(id: number, updatePerformanceDto: UpdatePerformanceDto) {

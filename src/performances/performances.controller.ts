@@ -47,8 +47,10 @@ export class PerformancesController {
 
   /* 특정 공연 가져오기 (id) */
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.performancesService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    const performance: Performance = await this.performancesService.findOne(id);
+
+    return performance;
   }
 
   @UseGuards(RolesGuard)
