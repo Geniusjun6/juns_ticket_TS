@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
 import { UpdatePerformanceDto } from './dto/update-performance.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -51,6 +47,7 @@ export class PerformancesService {
   }
 
   async findByKeyword(keyword: string) {
+    console.log('keyword 어떻게 나와', keyword);
     const performances: Performance[] = await this.performanceRepository.find({
       where: {
         title: Like(`%${keyword}%`),
@@ -60,23 +57,8 @@ export class PerformancesService {
     return performances;
   }
 
-  async update(
-    id: number,
-    updatePerformanceDto: UpdatePerformanceDto,
-    userId: number,
-  ) {
-    const performance = await this.findOneById(id);
-
-    if (performance.userId !== userId) {
-      throw new UnauthorizedException('권한이 없습니다.');
-    }
-
-    const updatedPerformance = await this.performanceRepository.update(
-      { id },
-      updatePerformanceDto,
-    );
-
-    return updatedPerformance;
+  update(id: number, updatePerformanceDto: UpdatePerformanceDto) {
+    return `This action updates a #${id} performance`;
   }
 
   remove(id: number) {

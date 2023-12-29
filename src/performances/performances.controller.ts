@@ -18,7 +18,6 @@ import { Roles } from 'src/utils/role.decorator';
 import { Role, User } from 'src/users/entities/user.entity';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { UserInfo } from 'src/utils/userInfo.decorator';
-import { userInfo } from 'os';
 
 @Controller('performances')
 export class PerformancesController {
@@ -54,6 +53,7 @@ export class PerformancesController {
   /* 특정 공연 가져오기 'Keyword') */
   @Get('search')
   async findByKeyword(@Query('keyword') keyword: string) {
+    console.log('keyword: ', keyword);
     const performances: Performance[] =
       await this.performancesService.findByKeyword(keyword);
 
@@ -77,20 +77,13 @@ export class PerformancesController {
     };
   }
 
-  /* 특정 공연 수정하기 */
   @UseGuards(RolesGuard)
   @Patch(':id')
-  async update(
-    @Param('id') id: number,
+  update(
+    @Param('id') id: string,
     @Body() updatePerformanceDto: UpdatePerformanceDto,
-    @UserInfo() user: User,
   ) {
-    await this.performancesService.update(id, updatePerformanceDto, user.id);
-
-    return {
-      success: 'true',
-      message: '공연 수정에 성공했습니다.',
-    };
+    return this.performancesService.update(+id, updatePerformanceDto);
   }
 
   @UseGuards(RolesGuard)
