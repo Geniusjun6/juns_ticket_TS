@@ -40,7 +40,7 @@ Authorization: Bearer {{token}}
 
 {
   "zone": "A",
-  "seatNumber": 2,
+  "seatNumber": 4,
   "price": 50000,
   "status": "Possible"
 }

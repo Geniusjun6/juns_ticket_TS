@@ -36,7 +36,7 @@ export class User {
   point: number;
 
   @IsEnum(Role)
-  @Column('varchar', { nullable: false })
+  @Column({ type: 'enum', enum: Role, nullable: false })
   role: Role;
 
   @CreateDateColumn()

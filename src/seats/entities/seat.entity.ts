@@ -13,7 +13,7 @@ import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { Performance } from 'src/performances/entities/performance.entity';
 
 @Entity()
-@Unique(['zone', 'seatNumber'])
+@Unique(['zone', 'seatNumber', 'performanceId'])
 export class Seat {
   @PrimaryGeneratedColumn()
   id: number;
@@ -35,7 +35,7 @@ export class Seat {
   price: number;
 
   @IsEnum(SeatStatus)
-  @Column({ default: SeatStatus.Possible })
+  @Column({ type: 'enum', enum: SeatStatus, default: SeatStatus.Possible })
   status: SeatStatus;
 
   @CreateDateColumn()
