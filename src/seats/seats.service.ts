@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Seat } from './entities/seat.entity';
 import { Repository } from 'typeorm';
 import { PerformancesService } from 'src/performances/performances.service';
+import { parse } from 'papaparse';
 
 @Injectable()
 export class SeatsService {
@@ -22,6 +23,7 @@ export class SeatsService {
       where: {
         zone: createSeatDto.zone,
         seatNumber: createSeatDto.seatNumber,
+        performanceId,
       },
     });
 
@@ -33,6 +35,54 @@ export class SeatsService {
       ...createSeatDto,
       performanceId: performance.id,
     });
+  }
+
+  async createSeatByFile(file: Express.Multer.File, performanceId: number) {
+    const performance =
+      await this.performanceService.findOneById(performanceId);
+    console.log(performance);
+
+    if (!file.originalname.endsWith('.csv')) {
+      throw new BadRequestException('CSV 파일만 업로드가 가능합니다.');
+    }
+
+    const csvContent = file.buffer.toString();
+
+    let parseResult;
+    try {
+      parseResult = parse(csvContent, {
+        header: true,
+        skipEmptyLines: true,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException('CSV 파싱에 실패했습니다.');
+    }
+
+    const seatsData = parseResult.data as any[];
+
+    for (const seatData of seatsData) {
+      if (
+        !seatData.zone ||
+        !seatData.seatNumber ||
+        !seatData.price ||
+        !seatData.status
+      ) {
+        throw new BadRequestException(
+          'CSV파일의 컬럼은 zone, seatNumber, price, status를 포함해야 합니다.',
+        );
+      }
+    }
+
+    const createSeatDto = seatsData.map((seat) => ({
+      zone: seat.zone,
+      seatNumber: +seat.seatNumber,
+      price: +seat.price,
+      status: seat.status,
+      performanceId: performance.id,
+    }));
+
+    await this.seatRepository.save(createSeatDto);
   }
 
   findAll() {

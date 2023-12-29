@@ -7,9 +7,9 @@ Content-Type: application/json
 {
 	"password" : "123456",
 	"confirmPassword" : "123456",
-	"name" : "문준식2",
+	"name" : "문준식3",
 	"role" : "Admin",
-	"email" : "admin2@test.com"
+	"email" : "admin3@test.com"
 }
 
 ### 로그인 (일반 유저)
