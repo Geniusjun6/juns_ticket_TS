@@ -32,6 +32,10 @@ Content-Type: application/json
 	"email" : "admin1@test.com"
 }
 
+### 내 정보 조회
+GET http://localhost:3000/users/me
+Authorization: Bearer {{token}}
+
 
 ### 좌석 등록하기
 POST http://localhost:3000/seats/3
@@ -50,3 +54,7 @@ GET http://localhost:3000/seats/?performance=6
 
 ### 특정 좌석 조회하기 (id)
 GET http://localhost:3000/seats/15
+
+### 특정 좌석 수정하기 (id)
+PATCH http://localhost:3000/seats/15
+Authorization: Bearer {{token}}
