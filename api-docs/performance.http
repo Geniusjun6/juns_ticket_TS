@@ -56,7 +56,7 @@ GET http://localhost:3000/performances/1
 GET http://localhost:3000/performances/search/?keyword=y
 
 ### 공연 수정하기
-PATCH http://localhost:3000/performances/1
+PATCH http://localhost:3000/performances/6
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

@@ -4,12 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateSeatDto } from './dto/create-seat.dto';
-import { UpdateSeatDto } from './dto/update-seat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seat } from './entities/seat.entity';
 import { Repository } from 'typeorm';
 import { PerformancesService } from 'src/performances/performances.service';
 import { parse } from 'papaparse';
+import { SeatStatus } from './entities/seat-status';
 
 @Injectable()
 export class SeatsService {
@@ -124,8 +124,21 @@ export class SeatsService {
     return seat;
   }
 
-  update(id: number, updateSeatDto: UpdateSeatDto) {
-    return `This action updates a #${id} seat`;
+  async update(id: number) {
+    const seat = await this.findOne(id);
+
+    const newStatus: SeatStatus =
+      seat.status === SeatStatus.Possible
+        ? SeatStatus.Complete
+        : SeatStatus.Possible;
+    const modifiedSeat = {
+      ...seat,
+      status: newStatus,
+    };
+
+    await this.seatRepository.update({ id }, { status: newStatus });
+
+    return modifiedSeat;
   }
 
   remove(id: number) {
