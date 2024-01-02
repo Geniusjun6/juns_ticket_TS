@@ -44,3 +44,9 @@ Authorization: Bearer {{token}}
   "price": 50000,
   "status": "Possible"
 }
+
+### 특정 공연 모든 좌석 조회하기(performanceId)
+GET http://localhost:3000/seats/?performance=6
+
+### 특정 좌석 조회하기 (id)
+GET http://localhost:3000/seats/15

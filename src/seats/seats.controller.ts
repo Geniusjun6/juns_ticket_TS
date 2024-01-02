@@ -18,11 +18,13 @@ import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Roles } from 'src/utils/role.decorator';
 import { Role } from 'src/users/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Seat } from './entities/seat.entity';
 
 @Controller('seats')
 export class SeatsController {
   constructor(private readonly seatsService: SeatsService) {}
 
+  /* 좌석 1개씩 등록하기 */
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @Post(':performanceId')
@@ -38,6 +40,7 @@ export class SeatsController {
     };
   }
 
+  /* 좌석 CSV 로 등록하기 */
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @Post('file/:performanceId')
@@ -54,14 +57,26 @@ export class SeatsController {
     };
   }
 
+  /* 모든 좌석 조회하기 */
   @Get()
-  findAll() {
-    return this.seatsService.findAll();
+  async findAll(@Query('performance') performanceId: number) {
+    const seats: Seat[] = await this.seatsService.findAllSeats(performanceId);
+    return {
+      success: 'true',
+      message: '좌석 조회에 성공했습니다.',
+      data: seats,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.seatsService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    const seat: Seat = await this.seatsService.findOne(id);
+
+    return {
+      success: 'true',
+      message: '좌석 조회에 성공했습니다.',
+      data: seat,
+    };
   }
 
   @Patch(':id')
