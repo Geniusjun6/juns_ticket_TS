@@ -15,10 +15,11 @@ import { SeatsService } from './seats.service';
 import { CreateSeatDto } from './dto/create-seat.dto';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Roles } from 'src/utils/role.decorator';
-import { Role } from 'src/users/entities/user.entity';
+import { Role, User } from 'src/users/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Seat } from './entities/seat.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { UserInfo } from 'src/utils/userInfo.decorator';
 
 @Controller('seats')
 export class SeatsController {
@@ -31,8 +32,9 @@ export class SeatsController {
   async create(
     @Body() createSeatDto: CreateSeatDto,
     @Param('performanceId') performanceId: number,
+    @UserInfo() user: User,
   ) {
-    await this.seatsService.create(createSeatDto, performanceId);
+    await this.seatsService.create(createSeatDto, performanceId, user.id);
 
     return {
       success: 'true',
@@ -48,8 +50,9 @@ export class SeatsController {
   async createSeatByFile(
     @UploadedFile() file: Express.Multer.File,
     @Param('performanceId') performanceId: number,
+    @UserInfo() user: User,
   ) {
-    await this.seatsService.createSeatByFile(file, performanceId);
+    await this.seatsService.createSeatByFile(file, performanceId, user.id);
 
     return {
       success: 'true',
@@ -85,10 +88,22 @@ export class SeatsController {
   @Patch(':id')
   async update(@Param('id') id: number) {
     await this.seatsService.update(id);
+
+    return {
+      success: 'true',
+      message: '좌석 수정에 성공했습니다.',
+    };
   }
 
+  /* 좌석 삭제하기 */
+  @UseGuards(RolesGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.seatsService.remove(+id);
+  async remove(@Param('id') id: number, @UserInfo() user: User) {
+    await this.seatsService.remove(id, user.id);
+
+    return {
+      success: 'true',
+      message: '좌석 삭제에 성공했습니다.',
+    };
   }
 }

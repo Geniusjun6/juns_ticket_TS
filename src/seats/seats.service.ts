@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateSeatDto } from './dto/create-seat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,7 +20,11 @@ export class SeatsService {
     private readonly performanceService: PerformancesService,
   ) {}
 
-  async create(createSeatDto: CreateSeatDto, performanceId: number) {
+  async create(
+    createSeatDto: CreateSeatDto,
+    performanceId: number,
+    userId: number,
+  ) {
     const performance =
       await this.performanceService.findOneById(performanceId);
 
@@ -38,10 +43,15 @@ export class SeatsService {
     await this.seatRepository.save({
       ...createSeatDto,
       performanceId: performance.id,
+      userId,
     });
   }
 
-  async createSeatByFile(file: Express.Multer.File, performanceId: number) {
+  async createSeatByFile(
+    file: Express.Multer.File,
+    performanceId: number,
+    userId: number,
+  ) {
     const performance =
       await this.performanceService.findOneById(performanceId);
 
@@ -97,6 +107,7 @@ export class SeatsService {
       price: +seat.price,
       status: seat.status,
       performanceId: performance.id,
+      userId,
     }));
 
     await this.seatRepository.save(createSeatDto);
@@ -141,7 +152,17 @@ export class SeatsService {
     return modifiedSeat;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} seat`;
+  async remove(id: number, userId: number) {
+    const seat = await this.findOne(id);
+
+    if (seat.userId !== userId) {
+      throw new UnauthorizedException('삭제 권한이 없습니다.');
+    }
+
+    if (seat.status === SeatStatus.Complete) {
+      throw new BadRequestException('예약이 완료된 좌석은 삭제할 수 없습니다.');
+    }
+
+    await this.seatRepository.softDelete({ id, userId });
   }
 }
