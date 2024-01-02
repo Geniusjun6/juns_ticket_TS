@@ -18,7 +18,6 @@ import { Roles } from 'src/utils/role.decorator';
 import { Role, User } from 'src/users/entities/user.entity';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { UserInfo } from 'src/utils/userInfo.decorator';
-import { userInfo } from 'os';
 
 @Controller('performances')
 export class PerformancesController {
