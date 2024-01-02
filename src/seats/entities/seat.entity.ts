@@ -11,6 +11,7 @@ import {
 import { SeatStatus } from './seat-status';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { Performance } from 'src/performances/entities/performance.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 @Unique(['zone', 'seatNumber', 'performanceId'])
@@ -21,6 +22,10 @@ export class Seat {
   @IsNumber()
   @Column()
   performanceId: number;
+
+  @IsNumber()
+  @Column()
+  userId: number;
 
   @IsString()
   @Column()
@@ -51,4 +56,9 @@ export class Seat {
     onDelete: 'CASCADE',
   })
   performance: Performance;
+
+  @ManyToOne(() => User, (user) => user.seat, {
+    onDelete: 'CASCADE',
+  })
+  user: User;
 }
