@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateReservationDto {
-  @IsNumber()
+  @IsNumber({}, { each: true })
   @IsNotEmpty({ message: '좌석을 선택해주세요.' })
   readonly seatIds: number[];
 
