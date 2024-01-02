@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateSeatDto } from './dto/create-seat.dto';
 import { UpdateSeatDto } from './dto/update-seat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -98,12 +102,26 @@ export class SeatsService {
     await this.seatRepository.save(createSeatDto);
   }
 
-  findAll() {
-    return `This action returns all seats`;
+  async findAllSeats(performanceId: number) {
+    const performance =
+      await this.performanceService.findOneById(performanceId);
+
+    const seats: Seat[] = await this.seatRepository.find({
+      where: {
+        performanceId: performance.id,
+      },
+    });
+
+    return seats;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} seat`;
+  async findOne(id: number) {
+    const seat = await this.seatRepository.findOne({ where: { id } });
+
+    if (!seat) {
+      throw new NotFoundException('해당하는 좌석을 찾을 수 없습니다.');
+    }
+    return seat;
   }
 
   update(id: number, updateSeatDto: UpdateSeatDto) {
