@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Performance } from 'src/performances/entities/performance.entity';
+import { Seat } from 'src/seats/entities/seat.entity';
 
 export enum Role {
   Admin = 'Admin',
@@ -50,4 +51,7 @@ export class User {
 
   @OneToMany(() => Performance, (performance) => performance.user)
   performance: Performance[];
+
+  @OneToMany(() => Seat, (seat) => seat.user)
+  seat: Seat[];
 }

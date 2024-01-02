@@ -58,3 +58,7 @@ GET http://localhost:3000/seats/15
 ### 특정 좌석 수정하기 (id)
 PATCH http://localhost:3000/seats/15
 Authorization: Bearer {{token}}
+
+### 특정 좌석 삭제하기 (id)
+DELETE http://localhost:3000/seats/13
+Authorization: Bearer {{token}}
