@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Performance } from 'src/performances/entities/performance.entity';
 import { Seat } from 'src/seats/entities/seat.entity';
+import { Reservation } from 'src/reservation/entities/reservation.entity';
 
 export enum Role {
   Admin = 'Admin',
@@ -54,4 +55,7 @@ export class User {
 
   @OneToMany(() => Seat, (seat) => seat.user)
   seat: Seat[];
+
+  @OneToMany(() => Reservation, (reservation) => reservation.user)
+  reservation: Reservation[];
 }

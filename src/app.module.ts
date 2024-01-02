@@ -13,6 +13,8 @@ import { UsersModule } from './users/users.module';
 import { PerformancesModule } from './performances/performances.module';
 import { SeatsModule } from './seats/seats.module';
 import { Seat } from './seats/entities/seat.entity';
+import { ReservationModule } from './reservation/reservation.module';
+import { Reservation } from './reservation/entities/reservation.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -24,7 +26,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [User, Performance, Seat],
+    entities: [User, Performance, Seat, Reservation],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -49,6 +51,7 @@ const typeOrmModuleOptions = {
     SeatsModule,
     UsersModule,
     PerformancesModule,
+    ReservationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
