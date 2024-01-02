@@ -13,12 +13,12 @@ import {
 } from '@nestjs/common';
 import { SeatsService } from './seats.service';
 import { CreateSeatDto } from './dto/create-seat.dto';
-import { UpdateSeatDto } from './dto/update-seat.dto';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Roles } from 'src/utils/role.decorator';
 import { Role } from 'src/users/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Seat } from './entities/seat.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('seats')
 export class SeatsController {
@@ -57,7 +57,7 @@ export class SeatsController {
     };
   }
 
-  /* 모든 좌석 조회하기 */
+  /* 모든 좌석 조회하기(공연별) */
   @Get()
   async findAll(@Query('performance') performanceId: number) {
     const seats: Seat[] = await this.seatsService.findAllSeats(performanceId);
@@ -68,6 +68,7 @@ export class SeatsController {
     };
   }
 
+  /* 특정 좌석 조회하기 */
   @Get(':id')
   async findOne(@Param('id') id: number) {
     const seat: Seat = await this.seatsService.findOne(id);
@@ -79,9 +80,11 @@ export class SeatsController {
     };
   }
 
+  /* 좌석 상태 수정하기 */
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSeatDto: UpdateSeatDto) {
-    return this.seatsService.update(+id, updateSeatDto);
+  async update(@Param('id') id: number) {
+    await this.seatsService.update(id);
   }
 
   @Delete(':id')
