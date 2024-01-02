@@ -30,10 +30,10 @@ export class Seat {
 
   @IsNumber()
   @Column({ type: 'int', nullable: true })
-  reservationId: number;
+  reservationId?: number;
 
   @IsString()
-  @Column({ type: 'string', nullable: false })
+  @Column({ type: 'varchar', nullable: false })
   zone: string;
 
   @IsNumber()
@@ -68,7 +68,7 @@ export class Seat {
   user: User;
 
   @ManyToOne(() => Reservation, (reservation) => reservation.seat, {
-    onDelete: 'DEFAULT',
+    onDelete: 'SET NULL',
   })
   Reservation: Reservation;
 }

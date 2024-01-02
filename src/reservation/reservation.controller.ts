@@ -1,15 +1,43 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Role, User } from 'src/users/entities/user.entity';
+import { Roles } from 'src/utils/role.decorator';
+import { UserInfo } from 'src/utils/userInfo.decorator';
 
 @Controller('reservation')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
+  @UseGuards(RolesGuard)
+  @Roles(Role.Customer)
   @Post()
-  create(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationService.create(createReservationDto);
+  async create(
+    @Body() createReservationDto: CreateReservationDto,
+    @Query('performance') performanceId: number,
+    @UserInfo() user: User,
+  ) {
+    const reservation = await this.reservationService.create(
+      createReservationDto,
+      performanceId,
+      user.id,
+    );
+
+    console.log('이거는 안나오나요?', reservation);
+
+    return reservation;
   }
 
   @Get()
@@ -23,7 +51,10 @@ export class ReservationController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReservationDto: UpdateReservationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateReservationDto: UpdateReservationDto,
+  ) {
     return this.reservationService.update(+id, updateReservationDto);
   }
 
