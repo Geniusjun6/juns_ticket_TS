@@ -19,6 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     const user = await this.authService.findUserByEmail(payload.email);
+    console.log('user: ', user);
     if (!user) {
       throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
     }

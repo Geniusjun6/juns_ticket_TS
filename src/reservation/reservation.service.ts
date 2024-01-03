@@ -12,7 +12,6 @@ import { SeatsService } from 'src/seats/seats.service';
 import { SeatStatus } from 'src/seats/entities/seat-status';
 import { User } from 'src/users/entities/user.entity';
 import { Seat } from 'src/seats/entities/seat.entity';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ReservationService {
@@ -44,7 +43,7 @@ export class ReservationService {
 
     let newReservationId = 0;
     /* 트랜잭션 시작 */
-    const reservationTransaction = await this.entityManager.transaction(
+    await this.entityManager.transaction(
       'READ COMMITTED',
       async (transactionEntityManager) => {
         const reservation: Reservation = transactionEntityManager.create(
@@ -110,14 +109,16 @@ export class ReservationService {
       },
     );
 
-    const reservationInfo = await this.reservationRepository
+    const reservationInfo: Reservation = await this.reservationRepository
       .createQueryBuilder('reservation')
       .leftJoinAndSelect('reservation.seat', 'seat')
       .leftJoinAndSelect('reservation.performance', 'performance')
       .select([
         'reservation.id',
+        'reservation.totalPrice',
         'seat.zone',
         'seat.seatNumber',
+        'seat.price',
         'performance.title',
         'performance.startTime',
         'performance.endTime',
@@ -126,5 +127,29 @@ export class ReservationService {
       .getOne();
 
     return reservationInfo;
+  }
+
+  async findAll(userId: number) {
+    const reservations: Reservation[] = await this.reservationRepository
+      .createQueryBuilder('reservation')
+      .leftJoinAndSelect('reservation.seat', 'seat')
+      .leftJoinAndSelect('reservation.performance', 'performance')
+      .select([
+        'reservation.id',
+        'reservation.totalPrice',
+        'reservation.createdAt',
+        'reservation.numbers',
+        'seat.zone',
+        'seat.seatNumber',
+        'seat.price',
+        'performance.title',
+        'performance.startTime',
+        'performance.endTime',
+      ])
+      .where('reservation.userId=:id', { id: userId })
+      .orderBy('reservation.createdAt', 'DESC')
+      .getMany();
+
+    return reservations;
   }
 }
