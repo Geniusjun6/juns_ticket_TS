@@ -63,6 +63,6 @@ export class Reservation {
   })
   performance: Performance;
 
-  @OneToMany(() => Seat, (seat) => seat.user)
+  @OneToMany(() => Seat, (seat) => seat.reservation)
   seat: Seat[];
 }

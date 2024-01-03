@@ -70,5 +70,5 @@ export class Seat {
   @ManyToOne(() => Reservation, (reservation) => reservation.seat, {
     onDelete: 'SET NULL',
   })
-  Reservation: Reservation;
+  reservation: Reservation;
 }
