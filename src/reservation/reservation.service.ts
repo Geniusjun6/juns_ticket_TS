@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
@@ -12,6 +13,7 @@ import { SeatsService } from 'src/seats/seats.service';
 import { SeatStatus } from 'src/seats/entities/seat-status';
 import { User } from 'src/users/entities/user.entity';
 import { Seat } from 'src/seats/entities/seat.entity';
+import { ReservationStatus } from './entities/reservation-status';
 
 @Injectable()
 export class ReservationService {
@@ -151,5 +153,76 @@ export class ReservationService {
       .getMany();
 
     return reservations;
+  }
+
+  async remove(id: number, userId: number) {
+    const reservation = await this.reservationRepository
+      .createQueryBuilder('reservation')
+      .leftJoinAndSelect('reservation.performance', 'performance')
+      .select([
+        'reservation.id',
+        'reservation.totalPrice',
+        'performance.startTime',
+      ])
+      .where('reservation.id=:id', { id })
+      .getOne();
+
+    if (!reservation) {
+      throw new NotFoundException('해당하는 예약을 찾을 수 없습니다.');
+    }
+
+    const startTime = new Date(reservation.performance.startTime);
+    startTime.setHours(startTime.getHours() + 9);
+
+    // 현재 시간 (KST)
+    const now = new Date();
+    now.setHours(now.getHours() + 9); // 현재 시간을 KST로 변환
+
+    if (startTime.getTime() - now.getTime() < 3 * 60 * 60 * 1000) {
+      throw new BadRequestException(
+        '예약 시작 3시간 전에는 취소가 불가능합니다.',
+      );
+    }
+
+    /* 트랜잭션 시작 */
+    await this.entityManager.transaction(
+      'READ COMMITTED',
+      async (transactionEntityManager) => {
+        try {
+          // 1. 예약 삭제
+          await transactionEntityManager.softDelete(Reservation, { id });
+
+          await transactionEntityManager.update(
+            Reservation,
+            { id },
+            { status: ReservationStatus.Cancled },
+          );
+
+          // 2. user 포인트 환불
+          const user = await transactionEntityManager.findOne(User, {
+            where: { id: userId },
+          });
+
+          const refundPoint: number = reservation.totalPrice;
+          await transactionEntityManager.update(
+            User,
+            { id: userId },
+            { point: user.point + refundPoint },
+          );
+
+          // 3. 좌석 상태 변경
+          await transactionEntityManager.update(
+            Seat,
+            { reservationId: reservation.id },
+            {
+              status: SeatStatus.Possible,
+              reservationId: null,
+            },
+          );
+        } catch (err) {
+          throw err;
+        }
+      },
+    );
   }
 }

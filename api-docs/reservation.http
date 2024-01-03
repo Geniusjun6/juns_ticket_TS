@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
 	"password" : "123456",
-	"email" : "customer2@test.com"
+	"email" : "customer1@test.com"
 }
 
 ### 로그인 (어드민 유저)
@@ -42,7 +42,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "seatIds": [24,25],
+  "seatIds": [20,21],
   "numbers": 2
 }
 
@@ -50,13 +50,6 @@ Authorization: Bearer {{token}}
 GET http://localhost:3000/reservation
 Authorization: Bearer {{token}}
 
-### 특정 좌석 조회하기 (id)
-GET http://localhost:3000/seats/15
-
-### 특정 좌석 수정하기 (id)
-PATCH http://localhost:3000/seats/15
-Authorization: Bearer {{token}}
-
-### 특정 좌석 삭제하기 (id)
-DELETE http://localhost:3000/seats/13
+### 예약 삭제하기 (id)
+DELETE http://localhost:3000/reservation/29
 Authorization: Bearer {{token}}
