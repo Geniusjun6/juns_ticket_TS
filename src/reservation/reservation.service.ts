@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
 import { EntityManager, Repository } from 'typeorm';
@@ -28,9 +27,10 @@ export class ReservationService {
   async create(
     createReservationDto: CreateReservationDto,
     performanceId: number,
-    userId: number,
+    user: User,
   ) {
     const { seatIds, numbers } = createReservationDto;
+    const { id: userId, point: userPoint } = user;
     if (seatIds.length !== numbers) {
       throw new BadRequestException('인원수에 맞게 좌석을 선택해야 합니다.');
     }
@@ -57,13 +57,13 @@ export class ReservationService {
           },
         );
 
-        // 2. 예약 추가
+        // 1. 예약 추가
         reservation.totalPrice = totalPrice;
         const newReservation = await transactionEntityManager.save(reservation);
 
         newReservationId = newReservation.id;
 
-        // 1. 좌석 상태값 변경 및 전체 금액 확인
+        // 2. 좌석 상태값 변경 및 전체 금액 확인
 
         for (const seatId of seatIds) {
           const seat = await transactionEntityManager
@@ -78,6 +78,12 @@ export class ReservationService {
             );
           }
 
+          if (seat.performanceId !== performanceId) {
+            throw new BadRequestException(
+              '해당 공연에 배정된 좌석이 아닙니다.',
+            );
+          }
+
           await transactionEntityManager.update(
             Seat,
             { id: seatId },
@@ -89,15 +95,7 @@ export class ReservationService {
         }
 
         // 3. 유저 포인트 차감
-        const user: User = await transactionEntityManager.findOne(User, {
-          where: { id: userId },
-        });
-
-        if (!user) {
-          throw new NotFoundException('예약하는 유저를 찾을 수 없습니다.');
-        }
-
-        const calculatePoint: number = user.point - totalPrice;
+        const calculatePoint: number = userPoint - totalPrice;
 
         if (calculatePoint < 0) {
           throw new BadRequestException('보유하신 포인트가 부족합니다.');
@@ -155,13 +153,15 @@ export class ReservationService {
     return reservations;
   }
 
-  async remove(id: number, userId: number) {
+  async remove(id: number, user: User) {
+    const { id: userId, point: userPoint } = user;
     const reservation = await this.reservationRepository
       .createQueryBuilder('reservation')
       .leftJoinAndSelect('reservation.performance', 'performance')
       .select([
         'reservation.id',
         'reservation.totalPrice',
+        'reservation.userId',
         'performance.startTime',
       ])
       .where('reservation.id=:id', { id })
@@ -169,6 +169,10 @@ export class ReservationService {
 
     if (!reservation) {
       throw new NotFoundException('해당하는 예약을 찾을 수 없습니다.');
+    }
+
+    if (reservation.userId !== userId) {
+      throw new UnauthorizedException('본인의 예약이 아닙니다.');
     }
 
     const startTime = new Date(reservation.performance.startTime);
@@ -199,15 +203,11 @@ export class ReservationService {
           );
 
           // 2. user 포인트 환불
-          const user = await transactionEntityManager.findOne(User, {
-            where: { id: userId },
-          });
-
           const refundPoint: number = reservation.totalPrice;
           await transactionEntityManager.update(
             User,
             { id: userId },
-            { point: user.point + refundPoint },
+            { point: userPoint + refundPoint },
           );
 
           // 3. 좌석 상태 변경

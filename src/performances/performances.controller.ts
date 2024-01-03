@@ -15,7 +15,8 @@ import { UpdatePerformanceDto } from './dto/update-performance.dto';
 import { Performance } from './entities/performance.entity';
 
 import { Roles } from 'src/utils/role.decorator';
-import { Role, User } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Role } from 'src/users/entities/user-role';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 

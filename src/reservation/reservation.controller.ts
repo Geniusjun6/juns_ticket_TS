@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -11,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
-import { Role, User } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Role } from 'src/users/entities/user-role';
 import { Roles } from 'src/utils/role.decorator';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { AuthGuard } from '@nestjs/passport';
@@ -33,7 +32,7 @@ export class ReservationController {
     const reservation = await this.reservationService.create(
       createReservationDto,
       performanceId,
-      user.id,
+      user,
     );
     return {
       success: 'true',
@@ -56,7 +55,7 @@ export class ReservationController {
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   async remove(@Param('id') id: number, @UserInfo() user: User) {
-    await this.reservationService.remove(id, user.id);
+    await this.reservationService.remove(id, user);
     return {
       success: 'true',
       message: '예약 취소에 성공했습니다.',

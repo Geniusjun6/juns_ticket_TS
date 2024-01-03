@@ -1,4 +1,4 @@
-import { Role } from 'src/users/entities/user.entity';
+import { Role } from 'src/users/entities/user-role';
 
 export interface Payload {
   id: number;
