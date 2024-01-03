@@ -1,4 +1,5 @@
 import { IsDate, IsString, IsNumber } from 'class-validator';
+import { Reservation } from 'src/reservation/entities/reservation.entity';
 import { Seat } from 'src/seats/entities/seat.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -57,4 +58,7 @@ export class Performance {
 
   @OneToMany(() => Seat, (seat) => seat.performance)
   seat: Seat[];
+
+  @OneToMany(() => Reservation, (reservation) => reservation.performance)
+  reservation: Reservation[];
 }

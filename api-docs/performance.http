@@ -56,12 +56,12 @@ GET http://localhost:3000/performances/1
 GET http://localhost:3000/performances/search/?keyword=y
 
 ### 공연 수정하기
-PATCH http://localhost:3000/performances/6
+PATCH http://localhost:3000/performances/3
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "title": "hi",
+  "title": "예약 테스트 해봅니다 3번 공연",
   "startTime": "2023-12-31 15:00",
   "endTime": "2023-12-31 16:00",
   "genres": ["Genre2", "Genre3"],

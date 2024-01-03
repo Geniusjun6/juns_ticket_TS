@@ -78,6 +78,7 @@ export class PerformancesController {
 
   /* 특정 공연 수정하기 */
   @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   @Patch(':id')
   async update(
     @Param('id') id: number,
@@ -93,6 +94,7 @@ export class PerformancesController {
   }
 
   @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   @Delete(':id')
   async remove(@Param('id') id: number, @UserInfo() user: User) {
     await this.performancesService.remove(id, user.id);
