@@ -1,5 +1,4 @@
 import {
-  BadGatewayException,
   BadRequestException,
   Injectable,
   NotFoundException,
@@ -20,7 +19,7 @@ export class ReservationService {
   constructor(
     @InjectRepository(Reservation)
     private readonly reservationRepository: Repository<Reservation>,
-    private readonly usersService: UsersService,
+    private readonly seatsService: SeatsService,
     @InjectEntityManager()
     private readonly entityManager: EntityManager,
   ) {}
@@ -35,43 +34,58 @@ export class ReservationService {
       throw new BadRequestException('인원수에 맞게 좌석을 선택해야 합니다.');
     }
 
-    const reservation: Reservation = this.reservationRepository.create({
-      userId,
-      performanceId,
-      numbers,
-    });
+    let totalPrice = 0;
+    //total Price 구하기
+    for (const seatId of seatIds) {
+      const seat = await this.seatsService.findOne(seatId);
 
+      totalPrice += seat.price;
+    }
+
+    let newReservationId = 0;
     /* 트랜잭션 시작 */
-    const newReservation = await this.entityManager.transaction(
+    const reservationTransaction = await this.entityManager.transaction(
       'READ COMMITTED',
       async (transactionEntityManager) => {
+        const reservation: Reservation = transactionEntityManager.create(
+          Reservation,
+          {
+            userId,
+            performanceId,
+            numbers,
+          },
+        );
+
+        // 2. 예약 추가
+        reservation.totalPrice = totalPrice;
+        const newReservation = await transactionEntityManager.save(reservation);
+
+        newReservationId = newReservation.id;
+
         // 1. 좌석 상태값 변경 및 전체 금액 확인
-        let totalPrice = 0;
+
         for (const seatId of seatIds) {
-          const seat = await transactionEntityManager.findOne(Seat, {
-            where: { id: seatId },
-          });
+          const seat = await transactionEntityManager
+            .createQueryBuilder(Seat, 'seat')
+            .setLock('pessimistic_write') // 동시성 처리를 위한 Lock 설정
+            .where('seat.id = :id', { id: seatId })
+            .getOne();
+
           if (seat.status !== SeatStatus.Possible) {
             throw new BadRequestException(
               `${seat.zone}-${seat.seatNumber} 좌석은 이미 예약이 있습니다.`,
             );
           }
 
-          totalPrice += seat.price;
-
           await transactionEntityManager.update(
             Seat,
             { id: seatId },
             {
               status: SeatStatus.Complete,
-              reservationId: reservation.id,
+              reservationId: newReservationId,
             },
           );
         }
-
-        // 2. 예약 추가
-        reservation.totalPrice = totalPrice;
-        const newReservation = await transactionEntityManager.save(reservation);
 
         // 3. 유저 포인트 차감
         const user: User = await transactionEntityManager.findOne(User, {
@@ -85,7 +99,7 @@ export class ReservationService {
         const calculatePoint: number = user.point - totalPrice;
 
         if (calculatePoint < 0) {
-          throw new BadGatewayException('보유하신 포인트가 부족합니다.');
+          throw new BadRequestException('보유하신 포인트가 부족합니다.');
         }
 
         await transactionEntityManager.update(
@@ -93,27 +107,24 @@ export class ReservationService {
           { id: userId },
           { point: calculatePoint },
         );
-
-        return newReservation;
       },
     );
 
-    return newReservation;
-  }
+    const reservationInfo = await this.reservationRepository
+      .createQueryBuilder('reservation')
+      .leftJoinAndSelect('reservation.seat', 'seat')
+      .leftJoinAndSelect('reservation.performance', 'performance')
+      .select([
+        'reservation.id',
+        'seat.zone',
+        'seat.seatNumber',
+        'performance.title',
+        'performance.startTime',
+        'performance.endTime',
+      ])
+      .where('reservation.id=:id', { id: newReservationId })
+      .getOne();
 
-  findAll() {
-    return `This action returns all reservation`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} reservation`;
-  }
-
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    return `This action updates a #${id} reservation`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} reservation`;
+    return reservationInfo;
   }
 }

@@ -34,32 +34,33 @@ export class ReservationController {
       performanceId,
       user.id,
     );
-
-    console.log('이거는 안나오나요?', reservation);
-
-    return reservation;
+    return {
+      success: 'true',
+      message: '예약에 성공했습니다.',
+      data: reservation,
+    };
   }
 
-  @Get()
-  findAll() {
-    return this.reservationService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.reservationService.findAll();
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reservationService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.reservationService.findOne(+id);
+  // }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateReservationDto: UpdateReservationDto,
-  ) {
-    return this.reservationService.update(+id, updateReservationDto);
-  }
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateReservationDto: UpdateReservationDto,
+  // ) {
+  //   return this.reservationService.update(+id, updateReservationDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reservationService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.reservationService.remove(+id);
+  // }
 }

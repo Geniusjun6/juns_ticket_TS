@@ -33,13 +33,13 @@ Content-Type: application/json
 }
 
 ### 예약하기
-POST http://localhost:3000/reservation/?performance=6
+POST http://localhost:3000/reservation/?performance=3
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "seatIds": [1,2,3],
-  "numbers": 4
+  "seatIds": [18,19],
+  "numbers": 2
 }
 
 ### 특정 공연 모든 좌석 조회하기(performanceId)
