@@ -20,8 +20,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(userData: SignUpDto): Promise<Partial<User>> {
-    const { name, password, confirmPassword, email, role } = userData;
+  async signUp(singUpDto: SignUpDto): Promise<Partial<User>> {
+    const { name, password, confirmPassword, email, role } = singUpDto;
 
     // 입력받은 password와 confirmPassword 가 다를 경우 에러 반환
     if (password !== confirmPassword) {
@@ -51,8 +51,8 @@ export class AuthService {
     };
   }
 
-  async signIn(signInInfo: SignInDto): Promise<string> {
-    const { email, password } = signInInfo;
+  async signIn(signInDto: SignInDto): Promise<string> {
+    const { email, password } = signInDto;
 
     const user = await this.findUserByEmail(email);
 
@@ -65,6 +65,7 @@ export class AuthService {
     const token: string = this.jwtService.sign({
       id: user.id,
       email: user.email,
+      point: user.point,
       name: user.name,
       role: user.role,
     });
@@ -74,7 +75,7 @@ export class AuthService {
 
   async findUserByEmail(email: User['email']): Promise<Partial<User>> {
     const user = await this.userRepository.findOne({
-      select: ['id', 'email', 'name', 'password', 'role'],
+      select: ['id', 'email', 'name', 'password', 'role', 'point'],
       where: { email },
     });
 

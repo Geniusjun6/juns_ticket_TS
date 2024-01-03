@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
 	"password" : "123456",
-	"email" : "customer1@test.com"
+	"email" : "customer3@test.com"
 }
 
 ### 로그인 (어드민 유저)
@@ -42,8 +42,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "seatIds": [20,21],
-  "numbers": 2
+  "seatIds": [15],
+  "numbers": 1
 }
 
 ### 모든 예약 조회하기(userId)
