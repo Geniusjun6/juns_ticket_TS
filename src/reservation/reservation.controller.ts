@@ -16,6 +16,7 @@ import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Role, User } from 'src/users/entities/user.entity';
 import { Roles } from 'src/utils/role.decorator';
 import { UserInfo } from 'src/utils/userInfo.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('reservation')
 export class ReservationController {
@@ -41,10 +42,16 @@ export class ReservationController {
     };
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.reservationService.findAll();
-  // }
+  @UseGuards(AuthGuard('jwt'))
+  @Get()
+  async findAll(@UserInfo() user: User) {
+    const reservations = await this.reservationService.findAll(user.id);
+    return {
+      success: 'true',
+      message: '예약 조회에 성공했습니다.',
+      data: reservations,
+    };
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
