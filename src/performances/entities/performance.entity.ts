@@ -1,4 +1,4 @@
-import { IsDate, IsString, IsNumber } from 'class-validator';
+import { IsDate, IsString } from 'class-validator';
 import { Reservation } from 'src/reservation/entities/reservation.entity';
 import { Seat } from 'src/seats/entities/seat.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -7,7 +7,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,

@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
 import { EntityManager, Repository } from 'typeorm';

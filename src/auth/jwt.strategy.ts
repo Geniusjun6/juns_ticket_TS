@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { AuthService } from './auth.service';
 import { Payload } from 'src/utils/payload';
 import { UsersService } from 'src/users/users.service';
 
@@ -10,8 +9,7 @@ import { UsersService } from 'src/users/users.service';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly configService: ConfigService,
-    private readonly authService: AuthService,
-    private readonly userServicd: UsersService,
+    private readonly userService: UsersService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -21,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: Payload) {
-    const user = await this.userServicd.findOneById(payload.id);
+    const user = await this.userService.findOneById(payload.id);
     if (!user) {
       throw new NotFoundException('해당하는 유저를 찾을 수 없습니다.');
     }
