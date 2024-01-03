@@ -1,4 +1,4 @@
-import { IsDate, IsEmail, IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNumber, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -11,11 +11,8 @@ import {
 import { Performance } from 'src/performances/entities/performance.entity';
 import { Seat } from 'src/seats/entities/seat.entity';
 import { Reservation } from 'src/reservation/entities/reservation.entity';
+import { Role } from './user-role';
 
-export enum Role {
-  Admin = 'Admin',
-  Customer = 'Customer',
-}
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()

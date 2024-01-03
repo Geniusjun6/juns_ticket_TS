@@ -11,9 +11,9 @@ import {
 } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
-import { Role, User } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Role } from 'src/users/entities/user-role';
 import { Roles } from 'src/utils/role.decorator';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { AuthGuard } from '@nestjs/passport';
