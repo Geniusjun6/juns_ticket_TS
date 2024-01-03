@@ -1,0 +1,57 @@
+@token = {{login.response.body.$.accessToken}}
+
+### 회원가입
+POST http://localhost:3000/sign-up
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"confirmPassword" : "123456",
+	"name" : "문준식2",
+	"role" : "Admin",
+	"email" : "admin2@test.com"
+}
+
+### 로그인 (일반 유저)
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "customer1@test.com"
+}
+
+### 로그인 (어드민 유저)
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "admin1@test.com"
+}
+
+### 예약하기
+POST http://localhost:3000/reservation/?performance=3
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "seatIds": [18,19],
+  "numbers": 2
+}
+
+### 특정 공연 모든 좌석 조회하기(performanceId)
+GET http://localhost:3000/seats/?performance=6
+
+### 특정 좌석 조회하기 (id)
+GET http://localhost:3000/seats/15
+
+### 특정 좌석 수정하기 (id)
+PATCH http://localhost:3000/seats/15
+Authorization: Bearer {{token}}
+
+### 특정 좌석 삭제하기 (id)
+DELETE http://localhost:3000/seats/13
+Authorization: Bearer {{token}}

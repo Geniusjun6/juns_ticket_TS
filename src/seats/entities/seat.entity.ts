@@ -12,6 +12,7 @@ import { SeatStatus } from './seat-status';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { Performance } from 'src/performances/entities/performance.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Reservation } from 'src/reservation/entities/reservation.entity';
 
 @Entity()
 @Unique(['zone', 'seatNumber', 'performanceId'])
@@ -20,23 +21,27 @@ export class Seat {
   id: number;
 
   @IsNumber()
-  @Column()
+  @Column({ type: 'int', nullable: false })
   performanceId: number;
 
   @IsNumber()
-  @Column()
+  @Column({ type: 'int', nullable: false })
   userId: number;
 
+  @IsNumber()
+  @Column({ type: 'int', nullable: true })
+  reservationId?: number;
+
   @IsString()
-  @Column()
+  @Column({ type: 'varchar', nullable: false })
   zone: string;
 
   @IsNumber()
-  @Column()
+  @Column({ type: 'int', nullable: true })
   seatNumber: number;
 
   @IsNumber()
-  @Column()
+  @Column({ type: 'int', nullable: true })
   price: number;
 
   @IsEnum(SeatStatus)
@@ -61,4 +66,9 @@ export class Seat {
     onDelete: 'CASCADE',
   })
   user: User;
+
+  @ManyToOne(() => Reservation, (reservation) => reservation.seat, {
+    onDelete: 'SET NULL',
+  })
+  reservation: Reservation;
 }

@@ -9,5 +9,6 @@ import { PerformancesModule } from 'src/performances/performances.module';
   controllers: [SeatsController],
   providers: [SeatsService],
   imports: [TypeOrmModule.forFeature([Seat]), PerformancesModule],
+  exports: [SeatsService],
 })
 export class SeatsModule {}

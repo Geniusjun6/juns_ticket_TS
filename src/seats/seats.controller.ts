@@ -97,6 +97,7 @@ export class SeatsController {
 
   /* 좌석 삭제하기 */
   @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   @Delete(':id')
   async remove(@Param('id') id: number, @UserInfo() user: User) {
     await this.seatsService.remove(id, user.id);
