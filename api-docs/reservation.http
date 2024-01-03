@@ -1,0 +1,55 @@
+@token = {{login.response.body.$.accessToken}}
+
+### 회원가입
+POST http://localhost:3000/sign-up
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"confirmPassword" : "123456",
+	"name" : "손님2",
+	"role" : "Customer",
+	"email" : "customer2@test.com"
+}
+
+### 로그인 (일반 유저)
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "customer3@test.com"
+}
+
+### 로그인 (어드민 유저)
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "admin1@test.com"
+}
+
+### 내 정보 조회
+GET http://localhost:3000/users/me
+Authorization: Bearer {{token}}
+
+### 예약하기
+POST http://localhost:3000/reservation/?performance=3
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "seatIds": [15],
+  "numbers": 1
+}
+
+### 모든 예약 조회하기(userId)
+GET http://localhost:3000/reservation
+Authorization: Bearer {{token}}
+
+### 예약 삭제하기 (id)
+DELETE http://localhost:3000/reservation/29
+Authorization: Bearer {{token}}

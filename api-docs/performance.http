@@ -1,0 +1,73 @@
+@token = {{login.response.body.$.accessToken}}
+
+### 회원가입
+POST http://localhost:3000/sign-up
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"confirmPassword" : "123456",
+	"name" : "문준식3",
+	"role" : "Admin",
+	"email" : "admin3@test.com"
+}
+
+### 로그인 (일반 유저)
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "customer1@test.com"
+}
+
+### 로그인 (어드민 유저)
+# @name login
+POST http://localhost:3000/sign-in
+Content-Type: application/json
+
+{
+	"password" : "123456",
+	"email" : "admin1@test.com"
+}
+
+
+### 공연 등록하기
+POST http://localhost:3000/performances
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Your Title",
+  "startTime": "2023-12-31 11:00",
+  "endTime": "2023-12-31 14:00",
+  "genres": ["Genre1", "Genre2"],
+  "overView": "Your Overview"
+}
+
+### 모든 공연 조회하기
+GET http://localhost:3000/performances
+
+### 특정 공연 조회하기(id)
+GET http://localhost:3000/performances/1
+
+### 특정 공연 조회하기(Keyword)
+GET http://localhost:3000/performances/search/?keyword=y
+
+### 공연 수정하기
+PATCH http://localhost:3000/performances/3
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "예약 테스트 해봅니다 3번 공연",
+  "startTime": "2023-12-31 15:00",
+  "endTime": "2023-12-31 16:00",
+  "genres": ["Genre2", "Genre3"],
+  "overView": "Modify overview"
+}
+
+### 공연 삭제하기
+DELETE http://localhost:3000/performances/6
+Authorization: Bearer {{token}}
